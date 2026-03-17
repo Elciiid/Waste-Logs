@@ -1,0 +1,12 @@
+# Temporary files
+tmp/
+*.tmp
+*.log
+
+# XAMPP/OS specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
