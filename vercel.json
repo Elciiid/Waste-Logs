@@ -2,13 +2,33 @@
     "version": 2,
     "builds": [
         {
-            "src": "**/*.php",
+            "src": "index.php",
+            "use": "vercel-php@0.7.2"
+        },
+        {
+            "src": "pages/*.php",
+            "use": "vercel-php@0.7.2"
+        },
+        {
+            "src": "api/*.php",
+            "use": "vercel-php@0.7.2"
+        },
+        {
+            "src": "auth/*.php",
             "use": "vercel-php@0.7.2"
         }
     ],
     "routes": [
         {
-            "src": "/(.*)",
+            "src": "^/$",
+            "dest": "/index.php"
+        },
+        {
+            "src": "^/(.*\\.php)$",
+            "dest": "/$1"
+        },
+        {
+            "src": "^/(.*)",
             "dest": "/$1"
         }
     ]
