@@ -2,10 +2,10 @@
 require_once '../auth/auth.php';
 require_once '../connection/database.php';
 require_once '../utils/functions.php';
+require_once '../auth/auth_helpers.php';
 
-// Check access (similar to history.php)
-$userRole = $_SESSION['wst_role_name'] ?? '';
-if (!hasSettingsAccess($conn, $_SESSION['username'] ?? '', $userRole)) {
+// Check access - use permission-based check
+if (!hasPermission($conn, 'export_logs')) {
     die("Unauthorized access");
 }
 

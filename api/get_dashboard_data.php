@@ -2,7 +2,7 @@
 /**
  * API endpoint for dashboard AJAX data.
  * Returns ALL dashboard metrics filtered by time scale.
- * 
+ *
  * Query params:
  *   scale = 'daily' | 'weekly' | 'monthly'
  */
@@ -13,19 +13,18 @@ require_once '../utils/analytics_helper.php';
 
 $scale = $_GET['scale'] ?? 'daily';
 
-// Validate scale
 if (!in_array($scale, ['daily', 'weekly', 'monthly'])) {
     $scale = 'daily';
 }
 
 try {
-    // Build date condition for SQL
+    // Build date condition for PostgreSQL
     if ($scale === 'daily') {
-        $dateCondition = "CAST(LogDate AS DATE) = CAST(GETDATE() AS DATE)";
+        $dateCondition = "\"LogDate\"::date = CURRENT_DATE";
     } elseif ($scale === 'weekly') {
-        $dateCondition = "CAST(LogDate AS DATE) >= DATEADD(day, -DATEPART(dw, GETDATE()) + 1, CAST(GETDATE() AS DATE)) AND CAST(LogDate AS DATE) <= CAST(GETDATE() AS DATE)";
+        $dateCondition = "\"LogDate\" >= date_trunc('week', CURRENT_DATE) AND \"LogDate\"::date <= CURRENT_DATE";
     } else {
-        $dateCondition = "YEAR(LogDate) = YEAR(GETDATE()) AND MONTH(LogDate) = MONTH(GETDATE())";
+        $dateCondition = "EXTRACT(YEAR FROM \"LogDate\") = EXTRACT(YEAR FROM NOW()) AND EXTRACT(MONTH FROM \"LogDate\") = EXTRACT(MONTH FROM NOW())";
     }
 
     // 1. Waste Processed stats
@@ -33,13 +32,13 @@ try {
 
     // 2. Pending approvals (filtered by time)
     $pendingCount = $conn->query(
-        "SELECT COUNT(*) FROM wst_Logs WHERE ApprovalStatus = 'Pending' AND $dateCondition"
+        "SELECT COUNT(*) FROM wst_logs WHERE \"ApprovalStatus\" = 'Pending' AND $dateCondition"
     )->fetchColumn() ?: 0;
 
     // 3. Approval Index (filtered by time)
-    $totalInPeriod = $conn->query("SELECT COUNT(*) FROM wst_Logs WHERE $dateCondition")->fetchColumn() ?: 0;
-    $approvedInPeriod = $conn->query("SELECT COUNT(*) FROM wst_Logs WHERE ApprovalStatus = 'Approved' AND $dateCondition")->fetchColumn() ?: 0;
-    $efficiencyIndex = $totalInPeriod > 0 ? round(($approvedInPeriod / $totalInPeriod) * 100) : 0;
+    $totalInPeriod    = $conn->query("SELECT COUNT(*) FROM wst_logs WHERE $dateCondition")->fetchColumn() ?: 0;
+    $approvedInPeriod = $conn->query("SELECT COUNT(*) FROM wst_logs WHERE \"ApprovalStatus\" = 'Approved' AND $dateCondition")->fetchColumn() ?: 0;
+    $efficiencyIndex  = $totalInPeriod > 0 ? round(($approvedInPeriod / $totalInPeriod) * 100) : 0;
 
     // 4. Trend chart data
     if ($scale === 'daily') {
@@ -52,11 +51,11 @@ try {
 
     echo json_encode([
         'success' => true,
-        'data' => [
-            'stats' => $stats,
-            'pending_count' => (int)$pendingCount,
+        'data'    => [
+            'stats'            => $stats,
+            'pending_count'    => (int)$pendingCount,
             'efficiency_index' => (int)$efficiencyIndex,
-            'trends' => $trends
+            'trends'           => $trends,
         ]
     ]);
 

@@ -1,10 +1,10 @@
 <?php
 require_once '../auth/auth.php';
 require_once '../connection/database.php';
-require_once '../auth/access_control.php';
+require_once '../auth/auth_helpers.php';
 
 $currentUser = getCurrentUser();
-if (!hasSettingsAccess($conn, $currentUser['username'], $_SESSION['wst_role_name'] ?? null)) {
+if (!hasSettingsAccess($conn, $currentUser['username'])) {
     echo json_encode([]);
     exit();
 }
@@ -17,23 +17,24 @@ if (strlen($query) < 2) {
 }
 
 try {
-    // Search directly in LRNPH_E master list for all active employees
+    // Search in app_employees (replaces LRNPH_E.dbo.lrn_master_list)
     $sql = "
-        SELECT TOP 10 
-            m.BiometricsID as username, 
-            LTRIM(RTRIM(ISNULL(m.FirstName, '') + ' ' + ISNULL(m.LastName, ''))) as full_name,
-            m.PositionTitle
-        FROM LRNPH_E.dbo.lrn_master_list m
-        WHERE (m.BiometricsID LIKE ? OR m.FirstName LIKE ? OR m.LastName LIKE ?)
-        AND m.IsActive = 1
-        ORDER BY m.BiometricsID ASC
+        SELECT
+            e.\"BiometricsID\" as username,
+            TRIM(COALESCE(e.\"FirstName\", '') || ' ' || COALESCE(e.\"LastName\", '')) as full_name,
+            e.\"PositionTitle\"
+        FROM app_employees e
+        WHERE (e.\"BiometricsID\" ILIKE ? OR e.\"FirstName\" ILIKE ? OR e.\"LastName\" ILIKE ?)
+        AND e.\"IsActive\" = TRUE
+        ORDER BY e.\"BiometricsID\" ASC
+        LIMIT 10
     ";
-    
+
     $searchTerm = "%$query%";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
     echo json_encode($results);
 
 } catch (PDOException $e) {

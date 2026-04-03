@@ -5,78 +5,74 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Check authentication
 if (!isset($_SESSION['username'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Get parameters
-$table = $_GET['table'] ?? '';
+$table  = $_GET['table']  ?? '';
 $search = $_GET['search'] ?? '';
 
-// Check if table is allowed
 if (!isTableAllowed($table)) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized table access']);
     exit;
 }
 
+// Map PascalCase table names (from JS) to PostgreSQL lowercase names
+$tableMap = [
+    'wst_Users'        => ['pg' => 'wst_users',        'id' => 'UserID',       'name' => 'Username'],
+    'wst_PCategories'  => ['pg' => 'wst_pcategories',  'id' => 'CategoryID',   'name' => 'CategoryName'],
+    'wst_PDescriptions'=> ['pg' => 'wst_pdescriptions','id' => 'DescriptionID','name' => 'DescriptionName'],
+    'wst_LogTypes'     => ['pg' => 'wst_log_types',    'id' => 'TypeID',       'name' => 'TypeName'],
+    'wst_Shifts'       => ['pg' => 'wst_shifts',       'id' => 'ShiftID',      'name' => 'ShiftName'],
+    'wst_Phases'       => ['pg' => 'wst_phases',       'id' => 'PhaseID',      'name' => 'PhaseName'],
+    'wst_Areas'        => ['pg' => 'wst_areas',        'id' => 'AreaID',       'name' => 'AreaName'],
+    'wst_Roles'        => ['pg' => 'wst_roles',        'id' => 'RoleID',       'name' => 'RoleName'],
+];
+
+if (!isset($tableMap[$table])) {
+    echo json_encode(['success' => false, 'message' => "Configuration not found for table: $table"]);
+    exit;
+}
+
+$cfg     = $tableMap[$table];
+$pgTable = $cfg['pg'];
+$idCol   = $cfg['id'];
+$nameCol = $cfg['name'];
+$params  = [];
+
 try {
-    global $conn;
-    
-    // Map table to primary key and name column (should match ui_helpers expectations)
-    $tableMap = [
-        'wst_Users' => ['id' => 'UserID', 'name' => 'Username'],
-        'wst_PCategories' => ['id' => 'CategoryID', 'name' => 'CategoryName'],
-        'wst_PDescriptions' => ['id' => 'DescriptionID', 'name' => 'DescriptionName'],
-        'wst_LogTypes' => ['id' => 'TypeID', 'name' => 'TypeName'],
-        'wst_Shifts' => ['id' => 'ShiftID', 'name' => 'ShiftName'],
-        'wst_Phases' => ['id' => 'PhaseID', 'name' => 'PhaseName'],
-        'wst_Areas' => ['id' => 'AreaID', 'name' => 'AreaName'],
-        'wst_Roles' => ['id' => 'RoleID', 'name' => 'RoleName']
-    ];
-
-    if (!isset($tableMap[$table])) {
-        echo json_encode(['success' => false, 'message' => 'Configuration not found for table: ' . $table]);
-        exit;
-    }
-
-    $params = [];
-
     if ($table === 'wst_Users') {
-        $sql = "SELECT u.*, r.RoleName, p.PhaseName, a.AreaName, 
-                       LTRIM(RTRIM(ISNULL(m.FirstName, '') + ' ' + ISNULL(m.LastName, ''))) as FullName
-                FROM wst_Users u
-                LEFT JOIN wst_Roles r ON u.RoleID = r.RoleID
-                LEFT JOIN wst_Phases p ON u.PhaseID = p.PhaseID
-                LEFT JOIN wst_Areas a ON u.AreaID = a.AreaID
-                LEFT JOIN LRNPH_E.dbo.lrn_master_list m ON u.Username COLLATE DATABASE_DEFAULT = m.BiometricsID COLLATE DATABASE_DEFAULT";
+        $sql = "SELECT u.*, r.\"RoleName\", p.\"PhaseName\", a.\"AreaName\",
+                       TRIM(COALESCE(e.\"FirstName\", '') || ' ' || COALESCE(e.\"LastName\", '')) as FullName
+                FROM wst_users u
+                LEFT JOIN wst_roles  r ON u.\"RoleID\"  = r.\"RoleID\"
+                LEFT JOIN wst_phases p ON u.\"PhaseID\" = p.\"PhaseID\"
+                LEFT JOIN wst_areas  a ON u.\"AreaID\"  = a.\"AreaID\"
+                LEFT JOIN app_employees e ON LOWER(u.\"Username\") = LOWER(e.\"BiometricsID\")";
         if ($search) {
-            $sql .= " WHERE u.Username LIKE ? OR m.FirstName LIKE ? OR m.LastName LIKE ?";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
-            $params[] = "%$search%";
+            $sql .= " WHERE u.\"Username\" ILIKE ? OR e.\"FirstName\" ILIKE ? OR e.\"LastName\" ILIKE ?";
+            $params = ["%$search%", "%$search%", "%$search%"];
         }
-        $sql .= " ORDER BY u.FullName ASC";
-    } elseif ($table === 'wst_LogTypes') {
-        $sql = "SELECT t.*, p.PhaseName 
-                FROM wst_LogTypes t
-                LEFT JOIN wst_Phases p ON t.PhaseID = p.PhaseID";
-        if ($search) {
-            $sql .= " WHERE t.TypeName LIKE ?";
-            $params[] = "%$search%";
-        }
-        $sql .= " ORDER BY t.TypeName ASC";
-    } else {
-        $idCol = $tableMap[$table]['id'];
-        $nameCol = $tableMap[$table]['name'];
+        $sql .= " ORDER BY u.\"FullName\" ASC";
 
-        $sql = "SELECT * FROM $table";
+    } elseif ($table === 'wst_LogTypes') {
+        $sql = "SELECT t.*, p.\"PhaseName\"
+                FROM wst_log_types t
+                LEFT JOIN wst_phases p ON t.\"PhaseID\" = p.\"PhaseID\"";
         if ($search) {
-            $sql .= " WHERE $nameCol LIKE ?";
-            $params[] = "%$search%";
+            $sql .= " WHERE t.\"TypeName\" ILIKE ?";
+            $params = ["%$search%"];
         }
-        $sql .= " ORDER BY $nameCol ASC";
+        $sql .= " ORDER BY t.\"TypeName\" ASC";
+
+    } else {
+        $sql = "SELECT * FROM $pgTable";
+        if ($search) {
+            $sql .= " WHERE \"$nameCol\" ILIKE ?";
+            $params = ["%$search%"];
+        }
+        $sql .= " ORDER BY \"$nameCol\" ASC";
     }
 
     $stmt = $conn->prepare($sql);
@@ -84,9 +80,9 @@ try {
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
-        'success' => true, 
-        'data' => $data,
-        'config' => $tableMap[$table]
+        'success' => true,
+        'data'    => $data,
+        'config'  => ['id' => $idCol, 'name' => $nameCol],
     ]);
 
 } catch (PDOException $e) {

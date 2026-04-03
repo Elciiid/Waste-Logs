@@ -1,21 +1,36 @@
 <?php
 date_default_timezone_set('Asia/Manila');
-$auth_server_name = "10.2.0.9";
-$database_name    = "LRNPH_OJT";
-$username         = "sa";
-$password         = "S3rverDB02lrn25";
+
+// Read connection string from environment variable (set in Vercel dashboard)
+// Format: postgres://USER:PASSWORD@HOST:PORT/DATABASE
+$databaseUrl = getenv('DATABASE_URL');
+
+if (!$databaseUrl) {
+    die("<div style=\"font-family:sans-serif; padding:50px; text-align:center;\">
+            <h2 style=\"color:#e11d48;\">Configuration Error</h2>
+            <p>DATABASE_URL environment variable is not set. Please configure it in Vercel.</p>
+         </div>");
+}
+
+// Parse the DATABASE_URL into PDO DSN components
+$parsed = parse_url($databaseUrl);
+$host   = $parsed['host'];
+$port   = $parsed['port'] ?? 5432;
+$dbname = ltrim($parsed['path'], '/');
+$user   = $parsed['user'];
+$pass   = $parsed['pass'];
 
 try {
-    $conn = new PDO("sqlsrv:server=$auth_server_name;Database=$database_name", $username, $password);
+    $dsn  = "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require";
+    $conn = new PDO($dsn, $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    // Log error internally
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
     error_log("Database Connection Error: " . $e->getMessage());
-    
-    // Show a user-friendly message instead of raw error
+
     if (session_status() === PHP_SESSION_NONE) session_start();
     $_SESSION['error_msg'] = "Database connection failed. Please try again later.";
-    
+
     die("<div style=\"font-family:sans-serif; padding:50px; text-align:center;\">
             <h2 style=\"color:#e11d48;\">System Unavailable</h2>
             <p>We're having trouble connecting to the database. Please contact IT support if this persists.</p>

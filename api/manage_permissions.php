@@ -11,7 +11,7 @@ if (!hasSettingsAccess($conn, $currentUser['username'])) {
 
 $roleId      = $_POST['roleId'] ?? null;
 $roleName    = trim($_POST['roleName'] ?? '');
-$permissions = $_POST['permissions'] ?? []; // Array of PermissionIDs
+$permissions = $_POST['permissions'] ?? [];
 
 if (!$roleId) {
     echo json_encode(['success' => false, 'error' => 'RoleID is required']);
@@ -23,25 +23,22 @@ try {
 
     // 1. Update role name if provided
     if (!empty($roleName)) {
-        // Format to Title Case
         $roleName = ucwords(strtolower($roleName));
-        
-        // Check for duplicate (excluding self)
-        $check = $conn->prepare("SELECT COUNT(*) FROM wst_Roles WHERE RoleName = ? AND RoleID != ?");
+        $check = $conn->prepare("SELECT COUNT(*) FROM wst_roles WHERE \"RoleName\" = ? AND \"RoleID\" != ?");
         $check->execute([$roleName, $roleId]);
         if ($check->fetchColumn() > 0) throw new Exception("A role with this name already exists");
 
-        $stmt = $conn->prepare("UPDATE wst_Roles SET RoleName = ? WHERE RoleID = ?");
+        $stmt = $conn->prepare("UPDATE wst_roles SET \"RoleName\" = ? WHERE \"RoleID\" = ?");
         $stmt->execute([$roleName, $roleId]);
     }
 
     // 2. Clear existing permissions for this role
-    $stmt = $conn->prepare("DELETE FROM wst_RolePermissions WHERE RoleID = ?");
+    $stmt = $conn->prepare("DELETE FROM wst_role_permissions WHERE \"RoleID\" = ?");
     $stmt->execute([$roleId]);
 
     // 3. Insert new selections
     if (!empty($permissions)) {
-        $insert = $conn->prepare("INSERT INTO wst_RolePermissions (RoleID, PermissionID) VALUES (?, ?)");
+        $insert = $conn->prepare("INSERT INTO wst_role_permissions (\"RoleID\", \"PermissionID\") VALUES (?, ?)");
         foreach ($permissions as $pId) {
             $insert->execute([$roleId, $pId]);
         }

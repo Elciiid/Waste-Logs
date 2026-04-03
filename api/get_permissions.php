@@ -4,8 +4,8 @@ require_once '../connection/database.php';
 require_once '../auth/auth_helpers.php';
 
 $currentUser = getCurrentUser();
-if (!hasSettingsAccess($conn, $currentUser['username'])) {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+if (!hasPermission($conn, 'access_settings')) {
+    echo json_encode(['success' => false, 'error' => 'Unauthorized access.']);
     exit();
 }
 
@@ -16,14 +16,16 @@ if (!$roleId) {
 }
 
 try {
-    // 1. Fetch all permissions (excluding those marked as Obsolete)
-    $allPerms = $conn->query("SELECT PermissionID, PermissionKey, PermissionLabel, Category 
-                             FROM wst_Permissions 
-                             WHERE PermissionLabel NOT LIKE 'Obsolete%'
-                             ORDER BY Category, PermissionLabel")->fetchAll(PDO::FETCH_ASSOC);
+    // 1. Fetch all permissions
+    $allPerms = $conn->query(
+        "SELECT \"PermissionID\", \"PermissionKey\", \"Label\"
+         FROM wst_permissions
+         WHERE \"Label\" NOT ILIKE 'Obsolete%'
+         ORDER BY \"Label\""
+    )->fetchAll(PDO::FETCH_ASSOC);
 
     // 2. Fetch assigned permissions for this role
-    $assignedStmt = $conn->prepare("SELECT PermissionID FROM wst_RolePermissions WHERE RoleID = ?");
+    $assignedStmt = $conn->prepare("SELECT \"PermissionID\" FROM wst_role_permissions WHERE \"RoleID\" = ?");
     $assignedStmt->execute([$roleId]);
     $assignedIds = $assignedStmt->fetchAll(PDO::FETCH_COLUMN);
 
