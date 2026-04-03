@@ -64,10 +64,7 @@ try {
 
     die("<div style=\"font-family:sans-serif; padding:50px; text-align:center;\">
             <h2 style=\"color:#e11d48;\">System Unavailable</h2>
-            <p>We're having trouble connecting to the database.</p>
-            <p style=\"color:#64748b; font-size:0.85rem; background:#f1f5f9; padding:10px; border-radius:5px; display:inline-block;\">
-                Error: " . htmlspecialchars($e->getMessage()) . "
-            </p>
+            <p>We're having trouble connecting to the database. Please try again later.</p>
             <div style=\"margin-top:20px;\">
                 <button onclick=\"location.reload()\" style=\"padding:10px 20px; background:#181a1f; color:#fff; border:none; border-radius:5px; cursor:pointer;\">Retry</button>
             </div>

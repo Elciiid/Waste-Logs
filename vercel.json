@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "index.php",
+            "src": "*.php",
             "use": "vercel-php@0.7.2"
         },
         {
@@ -20,15 +20,31 @@
     ],
     "routes": [
         {
+            "src": "/styles/(.*)",
+            "dest": "/styles/$1"
+        },
+        {
+            "src": "/assets/(.*)",
+            "dest": "/assets/$1"
+        },
+        {
+            "src": "/auth/(.*)",
+            "dest": "/auth/$1"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
+        },
+        {
             "src": "^/$",
             "dest": "/index.php"
         },
         {
-            "src": "^/(.*\\.php)$",
-            "dest": "/$1"
+            "src": "/pages/(.*)",
+            "dest": "/pages/$1"
         },
         {
-            "src": "^/(.*)",
+            "src": "/(.*\\.php)$",
             "dest": "/$1"
         }
     ]
