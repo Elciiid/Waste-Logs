@@ -1,3 +1,4 @@
+<?php
 // auth/auth.php — Session guard + auto-fill from Supabase
 require_once __DIR__ . '/../connection/database.php';
 require_once __DIR__ . '/auth_helpers.php';
@@ -12,7 +13,6 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
 
 // 2. Auto-fill session details if incomplete
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['employee_id']) || !isset($_SESSION['role'])) {
-    require_once __DIR__ . '/../connection/database.php';
     try {
         $identifier = $_SESSION['user_id'] ?? null;
         $field      = $identifier ? 'u.user_id' : 'u.username';

@@ -1,3 +1,4 @@
+<?php
 require_once __DIR__ . '/../connection/database.php';
 // session_start() is now handled inside database.php
 
