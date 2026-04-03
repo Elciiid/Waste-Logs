@@ -14,6 +14,7 @@ if (isset($_SESSION['user_id']) || isset($_SESSION['username'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link href='/styles/global.css' rel="stylesheet">
     <link href='/styles/login.css' rel="stylesheet">
 </head>
 <body>
@@ -36,7 +37,7 @@ if (isset($_SESSION['user_id']) || isset($_SESSION['username'])) {
             <?php unset($_SESSION['login_error']); ?>
         <?php endif; ?>
 
-        <form action="/api/save_log.php" method="POST">
+        <form action="/auth/process_login.php" method="POST">
             <div class="mb-4">
                 <label class="form-label text-uppercase fw-bold text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">Username</label>
                 <div class="position-relative">

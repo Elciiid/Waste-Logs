@@ -1,3 +1,15 @@
+:root {
+    --bg-dark: #202227;
+    --bg-light: #eff1f5;
+    --card-bg: #ffffff;
+    --text-main: #181a1f;
+    --text-muted: #8b929e;
+    --accent-yellow: #d1f43a;
+    --accent-green: #a3e635;
+    --accent-orange: #fb923c;
+    --brand-color: #d1f43a;
+}
+
 /* Form Styling for Dashboard Aesthetic */
 .form-label {
     font-weight: 700;
