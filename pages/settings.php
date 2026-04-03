@@ -562,7 +562,7 @@ function renderSettingsTable(containerId) {
         </div>`;
     } else if (table === 'wst_Users') {
         html = paginatedData.map(user => {
-            const displayName = user.FullName && user.FullName.trim() ? user.FullName : user.Username;
+            const displayName = user.EmployeeFullName && user.EmployeeFullName.trim() ? user.EmployeeFullName : user.Username;
             const initials = displayName.substring(0, 2).toUpperCase();
             return `
             <div class="data-row">

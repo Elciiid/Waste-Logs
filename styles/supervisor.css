@@ -224,10 +224,8 @@ body {
 /* Main Content Area */
 .main-content {
     flex-grow: 1;
-    background-color: rgba(239, 241, 245, 0.88);
-    /* Slightly transparent */
-    backdrop-filter: blur(10px);
-    /* Glass effect */
+    background-color: var(--bg-light);
+    /* Fully opaque */
     border-radius: 30px;
     margin: 15px 15px 15px 0;
     /* Creates the inset look */
