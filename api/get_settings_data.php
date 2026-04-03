@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../utils/functions.php';
 require_once __DIR__ . '/../connection/database.php';
-session_start();
+// session_start() is handled in database.php
 
 header('Content-Type: application/json');
 
@@ -44,7 +44,7 @@ $params  = [];
 try {
     if ($table === 'wst_Users') {
         $sql = "SELECT u.*, r.\"RoleName\", p.\"PhaseName\", a.\"AreaName\",
-                       TRIM(COALESCE(e.\"FirstName\", '') || ' ' || COALESCE(e.\"LastName\", '')) as FullName
+                       TRIM(COALESCE(e.\"FirstName\", '') || ' ' || COALESCE(e.\"LastName\", '')) as \"FullName\"
                 FROM wst_users u
                 LEFT JOIN wst_roles  r ON u.\"RoleID\"  = r.\"RoleID\"
                 LEFT JOIN wst_phases p ON u.\"PhaseID\" = p.\"PhaseID\"
@@ -54,7 +54,7 @@ try {
             $sql .= " WHERE u.\"Username\" ILIKE ? OR e.\"FirstName\" ILIKE ? OR e.\"LastName\" ILIKE ?";
             $params = ["%$search%", "%$search%", "%$search%"];
         }
-        $sql .= " ORDER BY u.\"FullName\" ASC";
+        $sql .= " ORDER BY \"FullName\" ASC";
 
     } elseif ($table === 'wst_LogTypes') {
         $sql = "SELECT t.*, p.\"PhaseName\"

@@ -271,15 +271,13 @@ require_once __DIR__ . '/../components/header.php';
 <style>
 /* Dashboard AJAX transition animations */
 .dash-animate-section {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease;
 }
 .dash-animate-section.fade-out {
     opacity: 0;
-    transform: translateY(8px);
 }
 .dash-animate-section.fade-in {
     opacity: 1;
-    transform: translateY(0);
 }
 #trend-bars-container {
     transition: opacity 0.35s ease;
