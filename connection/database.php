@@ -62,6 +62,11 @@ try {
     $handler = new PdoSessionHandler($conn);
     session_set_save_handler($handler, true);
 
+    // Start session AFTER handler is registered
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
 } catch (PDOException $e) {
     error_log("Database Connection Error: " . $e->getMessage());
 

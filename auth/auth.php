@@ -1,10 +1,8 @@
-<?php
 // auth/auth.php — Session guard + auto-fill from Supabase
+require_once __DIR__ . '/../connection/database.php';
 require_once __DIR__ . '/auth_helpers.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// session_start() is now handled inside database.php
 
 // 1. Gatekeeper: If not logged in, redirect to login
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {

@@ -1,5 +1,6 @@
 <?php
-session_start();
+require_once __DIR__ . '/../connection/database.php';
+// session_start() is now handled inside database.php
 if (isset($_SESSION['user_id']) || isset($_SESSION['username'])) {
     header("Location: /pages/dashboard.php");
     exit();
