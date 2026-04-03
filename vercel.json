@@ -10,19 +10,7 @@
             "use": "@vercel/static"
         },
         {
-            "src": "*.php",
-            "use": "vercel-php@0.7.2"
-        },
-        {
-            "src": "pages/*.php",
-            "use": "vercel-php@0.7.2"
-        },
-        {
-            "src": "api/*.php",
-            "use": "vercel-php@0.7.2"
-        },
-        {
-            "src": "auth/*.php",
+            "src": "**/*.php",
             "use": "vercel-php@0.7.2"
         }
     ],
@@ -36,23 +24,11 @@
             "dest": "/assets/$1"
         },
         {
-            "src": "/api/(.*)",
-            "dest": "/api/$1"
-        },
-        {
-            "src": "/auth/(.*)",
-            "dest": "/auth/$1"
-        },
-        {
-            "src": "/pages/(.*)",
-            "dest": "/pages/$1"
-        },
-        {
             "src": "^/$",
             "dest": "/index.php"
         },
         {
-            "src": "/(.*\\.php)$",
+            "src": "/(.*)",
             "dest": "/$1"
         }
     ]
