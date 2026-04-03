@@ -157,7 +157,7 @@ function getWasteLogs($conn, $statusFilter = 'All', $filters = [], $submittedBy 
 /**
  * DRY: Shared error handler.
  */
-function handleSystemError($message, $redirect = '../pages/dashboard.php')
+function handleSystemError($message, $redirect = '/pages/dashboard.php')
 {
     error_log("System Error: " . $message);
     if (session_status() === PHP_SESSION_NONE) session_start();

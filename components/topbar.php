@@ -70,10 +70,10 @@ function tryPhotoExtensions(employeeId, imgElement) {
         <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3" style="border-radius: 16px; font-weight: 500; min-width: 220px; padding: 10px; animation: fadeIn 0.2s ease-in-out;">
             <li><h6 class="dropdown-header text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">My Account</h6></li>
             <?php if ($hasApprovalAccess): ?>
-            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="settings.php"><ion-icon name="settings-outline" class="fs-5 text-muted"></ion-icon> Settings</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="/pages/settings.php"><ion-icon name="settings-outline" class="fs-5 text-muted"></ion-icon> Settings</a></li>
             <li><hr class="dropdown-divider my-2"></li>
             <?php endif; ?>
-            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded text-danger" href="../auth/logout.php"><ion-icon name="log-out-outline" class="fs-5"></ion-icon> Logout</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded text-danger" href='/auth/logout.php'><ion-icon name="log-out-outline" class="fs-5"></ion-icon> Logout</a></li>
         </ul>
     </div>
     
@@ -83,7 +83,7 @@ function tryPhotoExtensions(employeeId, imgElement) {
             <ion-icon name="search-outline" class="position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%); color: #8b929e; font-size: 1.2rem;"></ion-icon>
             <input type="text" id="globalSearchInput" class="form-control rounded-pill border-0 shadow-sm" placeholder="Search..." style="padding-left: 45px; height: 48px; font-weight: 500; background-color: #fff;">
         </div>
-        <a href="guide.php" class="bg-white rounded-circle shadow-sm d-flex justify-content-center align-items-center text-decoration-none" style="width: 48px; height: 48px;" title="User Guide">
+        <a href="/pages/guide.php" class="bg-white rounded-circle shadow-sm d-flex justify-content-center align-items-center text-decoration-none" style="width: 48px; height: 48px;" title="User Guide">
             <ion-icon name="help-circle-outline" style="font-size: 1.3rem; color: #181a1f;"></ion-icon>
         </a>
         <?php if ($hasApprovalAccess): ?>
@@ -108,7 +108,7 @@ function tryPhotoExtensions(employeeId, imgElement) {
                     <?php if ($pendingCount > 0): ?>
                         <?php foreach ($latestPendingLogs as $plog): ?>
                             <li>
-                                <a class="dropdown-item py-3 px-4 border-bottom d-flex align-items-start gap-3 dropdown-item-custom" href="../pages/supervisor.php" style="white-space: normal; transition: all 0.2s;">
+                                <a class="dropdown-item py-3 px-4 border-bottom d-flex align-items-start gap-3 dropdown-item-custom" href='/pages/supervisor.php' style="white-space: normal; transition: all 0.2s;">
                                     <div class="flex-shrink-0 position-relative">
                                         <div style="width: 45px; height: 45px;" class="rounded-circle shadow-sm">
                                             <?= getEmployeePhotoImg($plog['SubmitterEmployeeID'], 'rounded-circle', 'User', 'style="object-fit: cover; width: 100%; height: 100%; border: 2px solid white;"', 'font-size: 2.2rem; color: #a1a1aa;') ?>
@@ -139,7 +139,7 @@ function tryPhotoExtensions(employeeId, imgElement) {
                 </div>
                 <?php if ($pendingCount > 0): ?>
                     <li class="p-3 text-center bg-white border-top">
-                        <a href="../pages/supervisor.php" class="btn btn-sm w-100 rounded-pill fw-bold text-dark" style="background-color: #f4f6f8; font-size: 0.85rem; padding: 0.5rem;">View All Approvals</a>
+                        <a href='/pages/supervisor.php' class="btn btn-sm w-100 rounded-pill fw-bold text-dark" style="background-color: #f4f6f8; font-size: 0.85rem; padding: 0.5rem;">View All Approvals</a>
                     </li>
                 <?php endif; ?>
             </ul>

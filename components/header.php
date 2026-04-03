@@ -12,10 +12,10 @@
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link href="../styles/global.css" rel="stylesheet">
+    <link href='/styles/global.css' rel="stylesheet">
     <?php if (isset($extraCSS)): ?>
         <?php foreach ($extraCSS as $css): ?>
-            <link href="../styles/<?= $css ?>" rel="stylesheet">
+            <link href='/styles/<?= $css ?>' rel="stylesheet">
         <?php endforeach; ?>
     <?php endif; ?>
     

@@ -1,8 +1,8 @@
 <?php
 // Removed auth.php to prevent unexpected redirect loops on passive wall displays
 
-require_once '../connection/database.php';
-require_once '../utils/analytics_helper.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../utils/analytics_helper.php';
 
 $phaseId = isset($_GET['phase']) ? (int)$_GET['phase'] : 2; // Default to Phase 2
 $matrix = getTVBoardMetrics($conn, $phaseId);
@@ -16,7 +16,7 @@ $currentDate = strtoupper(date('F j, Y'));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV Display - Phase <?= $phaseId ?></title>
-    <link rel="stylesheet" href="../styles/tv_display.css">
+    <link rel="stylesheet" href='/styles/tv_display.css'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -35,7 +35,7 @@ $currentDate = strtoupper(date('F j, Y'));
         <div class="dashboard-grid items-<?= $matrixCount ?>">
             <?php foreach ($matrix as $catName => $data): 
                 $cleanName = strtolower(str_replace(' ', '_', $catName));
-                $imgPath = "../assets/img/products/{$cleanName}.png";
+                $imgPath = "/assets/img/products/{$cleanName}.png";
                 
                 // Analytics helper now natively returns the array of all LogTypes
                 // submitted today formatted as [['label' => '...', 'data' => ['val' => X, 'trend' => 'Y']]]

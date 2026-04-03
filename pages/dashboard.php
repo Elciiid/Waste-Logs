@@ -1,22 +1,22 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../utils/analytics_helper.php';
-require_once '../utils/functions.php'; // Added this line as per instruction
-require_once '../auth/access_control.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../utils/analytics_helper.php';
+require_once __DIR__ . '/../utils/functions.php'; // Added this line as per instruction
+require_once __DIR__ . '/../auth/access_control.php';
 
 $currentUser = getCurrentUser();
 // Dashboard is now public to all logged-in staff
 
 // Note: pending data is now computed once here and shared with sidebar/topbar components
-require_once '../api/approval_workflow.php';
+require_once __DIR__ . '/../api/approval_workflow.php';
 $approvalCtx = getApprovalContext($conn);
 $pendingLogs = $approvalCtx['pendingLogs'];
 $latestPendingLogs = $approvalCtx['latestPendingLogs'];
 
 try {
     // Daily date condition for initial load
-    $dailyCond = "CAST(LogDate AS DATE) = CAST(GETDATE() AS DATE)";
+    $dailyCond = "\"LogDate\"::date = CURRENT_DATE";
 
     // Initial load: daily filtered stats
     $filteredStats = getWasteStatsFiltered($conn, 'daily');
@@ -26,11 +26,11 @@ try {
     $areaCount = $filteredStats['area_count'];
 
     // Pending approvals (daily)
-    $pendingCount = $conn->query("SELECT COUNT(*) FROM wst_Logs WHERE ApprovalStatus = 'Pending' AND $dailyCond")->fetchColumn() ?: 0;
+    $pendingCount = $conn->query("SELECT COUNT(*) FROM wst_logs WHERE \"ApprovalStatus\" = 'Pending' AND $dailyCond")->fetchColumn() ?: 0;
 
     // Approval Index (daily)
-    $totalInPeriod = $conn->query("SELECT COUNT(*) FROM wst_Logs WHERE $dailyCond")->fetchColumn() ?: 0;
-    $approvedInPeriod = $conn->query("SELECT COUNT(*) FROM wst_Logs WHERE ApprovalStatus = 'Approved' AND $dailyCond")->fetchColumn() ?: 0;
+    $totalInPeriod = $conn->query("SELECT COUNT(*) FROM wst_logs WHERE $dailyCond")->fetchColumn() ?: 0;
+    $approvedInPeriod = $conn->query("SELECT COUNT(*) FROM wst_logs WHERE \"ApprovalStatus\" = 'Approved' AND $dailyCond")->fetchColumn() ?: 0;
     $efficiencyIndex = $totalInPeriod > 0 ? round(($approvedInPeriod / $totalInPeriod) * 100) : 0;
 
     // Distribution by Category
@@ -40,24 +40,24 @@ try {
     $trends = getDailyWasteTrends($conn);
     
 } catch(PDOException $e) {
-    require_once '../utils/functions.php';
+    require_once __DIR__ . '/../utils/functions.php';
     handleSystemError("Dashboard Stats Error: " . $e->getMessage(), 'dashboard.php');
 }
 ?>
 <?php
 $pageTitle = 'Dashboard - Waste Logs';
 $extraCSS = ['supervisor.css'];
-require_once '../components/header.php';
+require_once __DIR__ . '/../components/header.php';
 ?>
 <body>
 
 <div class="dashboard-wrapper">
     <!-- Left Sidebar Panel -->
-    <?php include '../components/sidebar.php'; ?>
+    <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <!-- Main Content Panel -->
     <main class="main-content">
-        <?php include '../components/topbar.php'; ?>
+        <?php include __DIR__ . '/../components/topbar.php'; ?>
 
         <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
             <div>
@@ -265,7 +265,7 @@ require_once '../components/header.php';
     </main>
 </div>
 
-<?php require_once '../components/scripts.php'; ?>
+<?php require_once __DIR__ . '/../components/scripts.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>

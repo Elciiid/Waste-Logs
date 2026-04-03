@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../connection/database.php';
+require_once __DIR__ . '/../connection/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $submitterId   = $_SESSION['username'] ?? null;
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (!$typeId || !$phaseId || !$areaId || !$shiftId || !$categoryId || !$descriptionId) {
         $_SESSION['error_msg'] = "Please select all required dropdown options to save the log.";
-        header("Location: ../pages/index.php");
+        header('Location: /pages/index.php');
         exit();
     }
 
@@ -32,14 +32,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($typeName === 'Others' && empty($otherTypeRemark)) {
             $_SESSION['error_msg'] = "Other Type Detail (Remark) is mandatory when selecting 'Others'.";
-            header("Location: ../pages/index.php");
+            header('Location: /pages/index.php');
             exit();
         }
 
         $sql = "INSERT INTO wst_logs
-                (\"LogDate\", \"TypeID\", \"PhaseID\", \"AreaID\", \"ShiftID\", \"CategoryID\", \"DescriptionID\", \"KG\", \"Reason\", \"SubmittedBy\", \"CurrentStep\", \"OtherTypeRemark\")
+                (\"LogDate\", \"TypeID\", \"PhaseID\", \"AreaID\", \"ShiftID\", \"CategoryID\", \"DescriptionID\", \"PCS\", \"KG\", \"Reason\", \"SubmittedBy\", \"CurrentStep\", \"OtherTypeRemark\")
                 VALUES
-                (:logDate, :typeId, :phaseId, :areaId, :shiftId, :categoryId, :descriptionId, :kg, :reason, :submittedBy, 1, :otherTypeRemark)";
+                (:logDate, :typeId, :phaseId, :areaId, :shiftId, :categoryId, :descriptionId, :pcs, :kg, :reason, :submittedBy, 1, :otherTypeRemark)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':logDate',        $logDate);
@@ -49,6 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':shiftId',        $shiftId,        PDO::PARAM_INT);
         $stmt->bindParam(':categoryId',     $categoryId,     PDO::PARAM_INT);
         $stmt->bindParam(':descriptionId',  $descriptionId,  PDO::PARAM_INT);
+        $stmt->bindParam(':pcs',            $pcs,            PDO::PARAM_INT);
         $stmt->bindParam(':kg',             $kg);
         $stmt->bindParam(':reason',         $reason,         PDO::PARAM_STR);
         $stmt->bindParam(':submittedBy',    $submitterId,    PDO::PARAM_STR);
@@ -59,17 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $_SESSION['error_msg'] = "Error saving the log. Please try again.";
         }
-        header("Location: ../pages/index.php");
+        header('Location: /pages/index.php');
         exit();
 
     } catch (PDOException $e) {
         $_SESSION['error_msg'] = "Database error: " . $e->getMessage();
-        header("Location: ../pages/index.php");
+        header('Location: /pages/index.php');
         exit();
     }
 
 } else {
-    header("Location: ../pages/index.php");
+    header('Location: /pages/index.php');
     exit();
 }
 ?>

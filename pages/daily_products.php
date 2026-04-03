@@ -1,12 +1,12 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../auth/auth_helpers.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../auth/auth_helpers.php';
 
 // Check permission
 if (!hasPermission($conn, 'view_daily_products')) {
     $_SESSION['error_msg'] = "Access Denied: You do not have permission to view this page.";
-    header("Location: dashboard.php");
+    header("Location: /pages/dashboard.php");
     exit();
 }
 
@@ -20,13 +20,13 @@ $sql = "SELECT
             t.TypeName as LogType,
             SUM(w.KG) as TotalKG,
             a.AreaName as Area
-        FROM wst_Logs w
-        LEFT JOIN wst_PCategories c ON w.CategoryID = c.CategoryID
-        LEFT JOIN wst_LogTypes t ON w.TypeID = t.TypeID
-        LEFT JOIN wst_Areas a ON w.AreaID = a.AreaID
-        WHERE CAST(w.LogDate AS DATE) = CAST(GETDATE() AS DATE)
-        GROUP BY c.CategoryName, t.TypeName, a.AreaName
-        ORDER BY c.CategoryName ASC";
+        FROM wst_logs w
+        LEFT JOIN wst_pcategories c ON w."CategoryID" = c."CategoryID"
+        LEFT JOIN wst_log_types t ON w."TypeID" = t."TypeID"
+        LEFT JOIN wst_areas a ON w."AreaID" = a."AreaID"
+        WHERE w."LogDate"::date = CURRENT_DATE
+        GROUP BY c."CategoryName", t."TypeName", a."AreaName"
+        ORDER BY c."CategoryName" ASC";
 
 try {
     $stmt = $conn->query($sql);
@@ -36,16 +36,16 @@ try {
     $error = "Failed to load data: " . $e->getMessage();
 }
 
-require_once '../components/header.php';
+require_once __DIR__ . '/../components/header.php';
 ?>
 <body>
 <div class="dashboard-wrapper">
     <?php 
-    require_once '../api/approval_workflow.php';
-    include '../components/sidebar.php'; 
+    require_once __DIR__ . '/../api/approval_workflow.php';
+    include __DIR__ . '/../components/sidebar.php'; 
     ?>
     <main class="main-content">
-        <?php include '../components/topbar.php'; ?>
+        <?php include __DIR__ . '/../components/topbar.php'; ?>
         
         <div class="pe-2 mt-2" style="flex-grow: 1; height: calc(100vh - 80px); display: flex; flex-direction: column;">
             <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
@@ -106,6 +106,6 @@ require_once '../components/header.php';
         </div>
     </main>
 </div>
-<?php require_once '../components/scripts.php'; ?>
+<?php require_once __DIR__ . '/../components/scripts.php'; ?>
 </body>
 </html>

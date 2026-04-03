@@ -35,36 +35,36 @@ if ($hasApprovalAccess) {
     </div>
     
     <nav class="nav-menu">
-        <a href="dashboard.php" class="nav-link <?= $currentPage == 'dashboard.php' ? 'active' : '' ?>">
+        <a href="/pages/dashboard.php" class="nav-link <?= $currentPage == 'dashboard.php' ? 'active' : '' ?>">
             <ion-icon name="grid-outline"></ion-icon> Dashboard
         </a>
         
         <?php if ($canSubmitLogs): ?>
-        <a href="index.php" class="nav-link <?= $currentPage == 'index.php' ? 'active' : '' ?>">
+        <a href="/pages/index.php" class="nav-link <?= $currentPage == 'index.php' ? 'active' : '' ?>">
             <ion-icon name="clipboard-outline"></ion-icon> Forms
         </a>
         <?php endif; ?>
 
         <?php if ($canViewOwn): ?>
-        <a href="submissions.php" class="nav-link <?= $currentPage == 'submissions.php' ? 'active' : '' ?>">
+        <a href="/pages/submissions.php" class="nav-link <?= $currentPage == 'submissions.php' ? 'active' : '' ?>">
             <ion-icon name="document-text-outline"></ion-icon> My Submissions
         </a>
         <?php endif; ?>
 
         <?php if ($hasHistoryAccess): ?>
-        <a href="history.php" class="nav-link <?= $currentPage == 'history.php' ? 'active' : '' ?>">
+        <a href="/pages/history.php" class="nav-link <?= $currentPage == 'history.php' ? 'active' : '' ?>">
             <ion-icon name="time-outline"></ion-icon> History Logs
         </a>
         <?php endif; ?>
 
         <?php if ($canViewDailyProducts): ?>
-        <a href="daily_products.php" class="nav-link <?= $currentPage == 'daily_products.php' ? 'active' : '' ?>">
+        <a href="/pages/daily_products.php" class="nav-link <?= $currentPage == 'daily_products.php' ? 'active' : '' ?>">
             <ion-icon name="today-outline"></ion-icon> Daily Products
         </a>
         <?php endif; ?>
 
         <?php if ($hasApprovalAccess): ?>
-        <a href="supervisor.php" class="nav-link <?= $currentPage == 'supervisor.php' ? 'active' : '' ?>">
+        <a href="/pages/supervisor.php" class="nav-link <?= $currentPage == 'supervisor.php' ? 'active' : '' ?>">
             <ion-icon name="checkmark-done-circle-outline"></ion-icon> Approvals
             <?php if($pendingCount > 0): ?>
                 <span class="nav-badge" id="pendingBadge" style="background: var(--accent-yellow); color: #000;"><?= $pendingCount ?></span>
@@ -74,7 +74,7 @@ if ($hasApprovalAccess) {
     </nav>
 
     <!-- IT Logo at bottom of sidebar -->
-    <img src="../assets/img/IT%20Footer.png" alt="IT Logo" class="sidebar-logo" style="margin-top: auto;">
+    <img src='/assets/img/IT%20Footer.png' alt="IT Logo" class="sidebar-logo" style="margin-top: auto;">
 </aside>
 
 <!-- Sidebar Overlay (mobile/tablet) -->

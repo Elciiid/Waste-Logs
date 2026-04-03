@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../connection/database.php';
+require_once __DIR__ . '/../connection/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($username) || empty($password)) {
         $_SESSION['login_error'] = "Please enter both username and password.";
-        header("Location: ../pages/login.php");
+        header("Location: /pages/login.php");
         exit();
     }
 
@@ -39,20 +39,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once __DIR__ . '/auth_helpers.php';
             bootstrapSession($user, $masterInfo);
 
-            header("Location: ../pages/dashboard.php");
+            header("Location: /pages/dashboard.php");
             exit();
         } else {
             $_SESSION['login_error'] = "Invalid username or password.";
-            header("Location: ../pages/login.php");
+            header("Location: /pages/login.php");
             exit();
         }
     } catch (PDOException $e) {
         $_SESSION['login_error'] = "Authentication error: " . $e->getMessage();
-        header("Location: ../pages/login.php");
+        header("Location: /pages/login.php");
         exit();
     }
 } else {
-    header("Location: ../pages/login.php");
+    header("Location: /pages/login.php");
     exit();
 }
 ?>

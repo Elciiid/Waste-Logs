@@ -1,17 +1,17 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../api/approval_workflow.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../api/approval_workflow.php';
 
 $currentUser = getCurrentUser();
 
 // Ensure user is logged in
 if (!$currentUser || empty($currentUser['username'])) {
-    header("Location: ../pages/login.php");
+    header('Location: /pages/login.php');
     exit();
 }
 
-require_once '../utils/functions.php';
+require_once __DIR__ . '/../utils/functions.php';
 
 // Get user's role and phase from session
 $userRoleName = $_SESSION['wst_role_name'] ?? null;
@@ -46,24 +46,24 @@ try {
     // Fetch specifically for the main table using the applied filters
     $logs              = getPendingRequests($conn, $userPhaseId, null, $filters);
 } catch(PDOException $e) {
-    require_once '../utils/functions.php';
+    require_once __DIR__ . '/../utils/functions.php';
     handleSystemError("Error fetching logs: " . $e->getMessage());
 }
 ?>
 <?php
 $pageTitle = 'Supervisor Dashboard - Waste Logs';
 $extraCSS = ['supervisor.css'];
-require_once '../components/header.php';
+require_once __DIR__ . '/../components/header.php';
 ?>
 <body>
 
 <div class="dashboard-wrapper">
     <!-- Left Sidebar Panel -->
-    <?php include '../components/sidebar.php'; ?>
+    <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <!-- Main Content Panel -->
     <main class="main-content">
-        <?php include '../components/topbar.php'; ?>
+        <?php include __DIR__ . '/../components/topbar.php'; ?>
 
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -335,7 +335,7 @@ require_once '../components/header.php';
   </div>
 </div>
 
-<?php require_once '../components/scripts.php'; ?>
+<?php require_once __DIR__ . '/../components/scripts.php'; ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const detailsModal = document.getElementById('detailsModal');
@@ -434,7 +434,7 @@ function updateStatus(logId, action) {
                 bodyData += '&reason=' + encodeURIComponent(result.value);
             }
 
-            fetch('../api/approve_request.php', {
+            fetch('/api/approve_request.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: bodyData

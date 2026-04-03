@@ -1,7 +1,7 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../utils/functions.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../utils/functions.php';
 
 $currentUser = getCurrentUser();
 ?>
@@ -14,7 +14,7 @@ $currentUser = getCurrentUser();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <link href="../styles/supervisor.css" rel="stylesheet">
+    <link href='/styles/supervisor.css' rel="stylesheet">
     <style>
         /* ======= GUIDE PAGE STYLES ======= */
         .guide-header {
@@ -378,10 +378,10 @@ $currentUser = getCurrentUser();
 <body>
 
 <div class="dashboard-wrapper">
-    <?php include '../components/sidebar.php'; ?>
+    <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <main class="main-content">
-        <?php include '../components/topbar.php'; ?>
+        <?php include __DIR__ . '/../components/topbar.php'; ?>
 
         <div class="pe-2 mt-2" style="flex-grow: 1; height: calc(100vh - 80px); display: flex; flex-direction: column;">
 

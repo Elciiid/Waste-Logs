@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // 1. Gatekeeper: If not logged in, redirect to login
 if (!isset($_SESSION['user_id']) && !isset($_SESSION['username'])) {
-    header("Location: ../pages/login.php");
+    header('Location: /pages/login.php');
     exit();
 }
 
@@ -42,11 +42,11 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['employee_id']) || !isset($
             bootstrapSession($user, $masterInfo);
         } else {
             session_destroy();
-            header("Location: ../pages/login.php?error=session_invalid");
+            header('Location: /pages/login.php?error=session_invalid');
             exit();
         }
     } catch (PDOException $e) {
-        header("Location: ../pages/login.php?error=db_error");
+        header('Location: /pages/login.php?error=db_error');
         exit();
     }
 }

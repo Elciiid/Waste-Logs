@@ -1,13 +1,13 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../auth/access_control.php';
-require_once '../utils/functions.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../auth/access_control.php';
+require_once __DIR__ . '/../utils/functions.php';
 
 $currentUser = getCurrentUser();
 requireSupervisorAccess($conn, $currentUser);
 
-require_once '../api/approval_workflow.php';
+require_once __DIR__ . '/../api/approval_workflow.php';
 $approvalCtx = getApprovalContext($conn);
 $pendingCount = $approvalCtx['pendingCount'];
 $pendingLogs = $approvalCtx['pendingLogs'];
@@ -21,23 +21,23 @@ try {
 
     // We will fetch the large lists (Users, Descriptions, etc.) via AJAX to prevent lagginess
 } catch (Exception $e) {
-    require_once '../utils/functions.php';
+    require_once __DIR__ . '/../utils/functions.php';
     handleSystemError("Error fetching settings data: " . $e->getMessage());
 }
 ?>
 <?php
 $pageTitle = 'System Settings - Waste Logs';
 $extraCSS = ['supervisor.css', 'settings.css'];
-require_once '../components/header.php';
-require_once '../utils/ui_helpers.php';
+require_once __DIR__ . '/../components/header.php';
+require_once __DIR__ . '/../utils/ui_helpers.php';
 ?>
 <body class="settings-page-active">
 
 <div class="dashboard-wrapper">
-    <?php include '../components/sidebar.php'; ?>
+    <?php include __DIR__ . '/../components/sidebar.php'; ?>
 
     <main class="main-content">
-        <?php include '../components/topbar.php'; ?>
+        <?php include __DIR__ . '/../components/topbar.php'; ?>
 
         <div class="d-flex justify-content-between align-items-end mb-3">
             <div>
@@ -428,7 +428,7 @@ require_once '../utils/ui_helpers.php';
     </div>
 </div>
 
-<?php require_once '../components/scripts.php'; ?>
+<?php require_once __DIR__ . '/../components/scripts.php'; ?>
 <script>
 // ============================================================
 // Dynamic Pagination State
@@ -487,7 +487,7 @@ function fetchTableData(table, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    fetch(`../api/get_settings_data.php?table=${table}`)
+    fetch(`/api/get_settings_data.php?table=${table}`)
     .then(r => r.json())
     .then(res => {
         if (!res.success) {
@@ -762,7 +762,7 @@ function showPermissionsModal(roleId, roleName) {
     
     permissionsModalInstance.show();
 
-    fetch(`../api/get_permissions.php?roleId=${roleId}`)
+    fetch(`/api/get_permissions.php?roleId=${roleId}`)
     .then(r => r.json())
     .then(res => {
         if (!res.success) throw new Error(res.error);

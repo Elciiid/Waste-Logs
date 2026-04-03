@@ -1,8 +1,8 @@
 <?php
-require_once '../auth/auth.php';
-require_once '../connection/database.php';
-require_once '../utils/functions.php';
-require_once '../auth/auth_helpers.php';
+require_once __DIR__ . '/../auth/auth.php';
+require_once __DIR__ . '/../connection/database.php';
+require_once __DIR__ . '/../utils/functions.php';
+require_once __DIR__ . '/../auth/auth_helpers.php';
 
 // Check access - use permission-based check
 if (!hasPermission($conn, 'export_logs')) {
