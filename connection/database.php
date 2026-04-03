@@ -12,28 +12,42 @@ if (!$databaseUrl) {
          </div>");
 }
 
-// Parse the DATABASE_URL into PDO DSN components using regex for robustness
-// This handles special characters in passwords better than parse_url()
+// Clean up the URL (sometimes users accidentally include "DATABASE_URL=" or spaces)
+$databaseUrl = trim($databaseUrl);
+if (strpos($databaseUrl, 'DATABASE_URL=') === 0) {
+    $databaseUrl = substr($databaseUrl, 13);
+}
+
+$user = $pass = $host = $dbname = null;
+$port = 5432;
+
+// Method 1: Robust Regex (handles special characters in passwords)
 if (preg_match('/^postgres(?:ql)?:\/\/([^:]+):(.*)@([^:\/]+)(?::(\d+))?\/(.+)$/', $databaseUrl, $matches)) {
     $user   = $matches[1];
     $pass   = $matches[2];
     $host   = $matches[3];
     $port   = $matches[4] ?: 5432;
-    $dbname = $matches[5];
-} else {
-    // Fallback if regex fails, though DATABASE_URL should match the pattern
+    $dbPath = $matches[5];
+    // Remove query params from dbname if present (e.g. ?sslmode=require)
+    $dbname = explode('?', $dbPath)[0];
+} 
+// Method 2: parse_url fallback
+else {
     $parsed = parse_url($databaseUrl);
-    $host   = $parsed['host'] ?? null;
-    $port   = $parsed['port'] ?? 5432;
-    $dbname = ltrim($parsed['path'] ?? '', '/');
     $user   = $parsed['user'] ?? null;
     $pass   = $parsed['pass'] ?? null;
+    $host   = $parsed['host'] ?? null;
+    $port   = $parsed['port'] ?? 5432;
+    $dbPath = ltrim($parsed['path'] ?? '', '/');
+    $dbname = explode('?', $dbPath)[0];
 }
 
-if (!$host || !$user) {
+if (!$host || !$user || !$dbname) {
+    $errorType = !$host ? "host" : (!$user ? "username" : "database name");
     die("<div style=\"font-family:sans-serif; padding:50px; text-align:center;\">
             <h2 style=\"color:#e11d48;\">Configuration Error</h2>
-            <p>DATABASE_URL is malformed or invalid. Please check your Vercel settings.</p>
+            <p>DATABASE_URL is missing a valid <strong>$errorType</strong>.</p>
+            <p style=\"color:#64748b; font-size:0.85rem;\">Format: postgres://USER:PASS@HOST:PORT/DBNAME</p>
          </div>");
 }
 
