@@ -56,6 +56,12 @@ try {
     $conn = new PDO($dsn, $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+    // Register Database-backed Session Handler (for Vercel persistence)
+    require_once __DIR__ . '/../utils/session_handler.php';
+    $handler = new PdoSessionHandler($conn);
+    session_set_save_handler($handler, true);
+
 } catch (PDOException $e) {
     error_log("Database Connection Error: " . $e->getMessage());
 
