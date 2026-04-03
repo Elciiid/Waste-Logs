@@ -63,6 +63,13 @@ function getCurrentUser() {
  */
 function hasPermission($conn, $permissionKey) {
     $roleId = $_SESSION['wst_role_id'] ?? null;
+    $roleName = $_SESSION['role'] ?? null; // Role from app_users table
+
+    // Super Admin Bypass
+    if ($roleName === 'admin' || $roleId == 1) {
+        return true;
+    }
+
     if (!$roleId) return false;
 
     $sql = "
